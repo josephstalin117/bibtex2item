@@ -74,8 +74,8 @@ def parse_conference(r):
     conference = {"entry_type":"",
                 "cation_key":"",
                 "title":"",
+                "booktitle":"",
                 "author":"",
-                "journal":"",
                 "volume":"",
                 "number":"",
                 "pages":"",
@@ -93,8 +93,28 @@ def parse_conference(r):
     
     conference["author"] = parse_authors(conference["author"])
 
+    return conference
 
-def bibtex2bibitem(bibtex):
+
+def bibtex2bibitem_conference(bibtex):
+    bibitems = []
+    bibitem = ""
+
+    bibitem = bibtex["author"] + ', ``{}". '.format(bibtex["title"])
+    print(bibitem)
+    if bibtex["booktitle"]:
+        bibitem = bibitem + 'in \emph{' + bibtex["booktitle"] + '}, '
+    if bibtex['volume']:
+        bibitem = bibitem + 'vol. ' + bibtex["volume"] + ', '
+    if bibtex["number"]:
+        bibitem = bibitem + 'no. ' + bibtex["number"] + ', '
+    if bibtex["pages"]:
+        bibitem = bibitem + 'pp. ' + bibtex["pages"] + ', '
+    if bibtex["year"]:
+        bibitem = bibitem + bibtex["year"]
+    return bibitem
+
+def bibtex2bibitem_article(bibtex):
     bibitems = []
     bibitem = ""
 
@@ -113,36 +133,17 @@ def bibtex2bibitem(bibtex):
     return bibitem
 
 
-def parse_conference(r):
-    conference = {"entry_type":"",
-                "cation_key":"",
-                "title":"",
-                "author":"",
-                "journal":"",
-                "volume":"",
-                "number":"",
-                "pages":"",
-                "year":"",
-                "publisher":"",
-               }
-    conference["entry_type"] = re.search(r'@(.*?){.*?', r).group(1)
-    search_result = re.search(r'(.*?),(.*?$)', r)
-    conference["cation_key"] = re.search(r'{(.*?)$', search_result.group(1)).group(1)
-    content = search_result.group(2)
-    for key, value in conference.items():
-        m = re.search(key + r'={(.*?)},',content)
-        if m:
-            conference[key] = m.group(1)
-    
-    conference["author"] = parse_authors(conference["author"])
-
-
-
 if __name__ == '__main__':
     bibs = parse_bibs("./gatattn.bib")
     #print(bibs)
     article = parse_article(bibs[0])
     print(article)
-    bibitem = bibtex2bibitem(article)
+    bibitem = bibtex2bibitem_article(article)
+    print(bibitem)
+
+    print(bibs)
+    conference = parse_conference(bibs[2])
+    print(conference)
+    bibitem = bibtex2bibitem_conference(conference)
     print(bibitem)
     
