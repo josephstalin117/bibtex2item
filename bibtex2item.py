@@ -75,6 +75,7 @@ def parse_conference(r):
                 "cation_key":"",
                 "title":"",
                 "booktitle":"",
+                "journal":"",
                 "author":"",
                 "volume":"",
                 "number":"",
@@ -87,9 +88,10 @@ def parse_conference(r):
     conference["cation_key"] = re.search(r'{(.*?)$', search_result.group(1)).group(1)
     content = search_result.group(2)
     for key, value in conference.items():
-        m = re.search(key + r'={(.*?)},',content)
+        m = re.search(key + r'={(.*?)}',content)
         if m:
             conference[key] = m.group(1)
+
     
     conference["author"] = parse_authors(conference["author"])
 
@@ -104,6 +106,8 @@ def bibtex2bibitem_conference(bibtex):
     print(bibitem)
     if bibtex["booktitle"]:
         bibitem = bibitem + 'in \emph{' + bibtex["booktitle"] + '}, '
+    if bibtex["journal"]:
+        bibitem = bibitem + 'in \emph{' + bibtex["journal"] + '}, '
     if bibtex['volume']:
         bibitem = bibitem + 'vol. ' + bibtex["volume"] + ', '
     if bibtex["number"]:
@@ -142,7 +146,7 @@ if __name__ == '__main__':
     print(bibitem)
 
     print(bibs)
-    conference = parse_conference(bibs[2])
+    conference = parse_conference(bibs[4])
     print(conference)
     bibitem = bibtex2bibitem_conference(conference)
     print(bibitem)
