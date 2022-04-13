@@ -75,7 +75,14 @@ def parse_authors(authors):
     return output_authors
 
 def parse_conferencename(conference_name):
-    new_conference_name = re.sub('Proceedings', 'Proc.', conference_name)
+    #print(conference_name)
+    m = re.search(r'Proceedings',conference_name)
+    if m:
+        new_conference_name = re.sub('Proceedings', 'Proc.', conference_name)
+    else:
+        new_conference_name = "Proc. of the " + conference_name
+    # IJCAI
+    new_conference_name = re.sub('IJCAI', 'of the International Joint Conferences on Artificial Intelligence (IJCAI)', new_conference_name)
     return new_conference_name
 
 
@@ -111,7 +118,7 @@ def bibtex2bibitem_conference(bibtex):
 
     bibitem = ""
 
-    bibitem = bibtex["author"] + ', ``{}". '.format(bibtex["title"])
+    bibitem = bibtex["author"] + ', ``{}", '.format(bibtex["title"])
     if bibtex["booktitle"]:
         bibitem = bibitem + 'in \emph{' + bibtex["booktitle"] + '}, '
     if bibtex["journal"]:
@@ -129,7 +136,7 @@ def bibtex2bibitem_conference(bibtex):
 def bibtex2bibitem_article(bibtex):
     bibitem = ""
 
-    bibitem = bibtex["author"] + ', ``{}". '.format(bibtex["title"])
+    bibitem = bibtex["author"] + ', ``{}",'.format(bibtex["title"])
     if bibtex["journal"]:
         bibitem = bibitem + ' \emph{' + bibtex["journal"] + '}, '
     if bibtex['volume']:
