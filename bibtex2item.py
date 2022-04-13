@@ -29,6 +29,11 @@ def parse_bibs(filename):
 
     return bib_list
 
+def check_type(r):
+    entry_type = re.search(r'@(.*?){.*?', r).group(1)
+    return entry_type
+
+
 def parse_article(r):
     article = {"entry_type":"",
                "cation_key":"",
@@ -46,7 +51,7 @@ def parse_article(r):
     article["cation_key"] = re.search(r'{(.*?)$', search_result.group(1)).group(1)
     content = search_result.group(2)
     for key, value in article.items():
-        m = re.search(key + r'={(.*?)},',content)
+        m = re.search(key + r'={(.*?)}',content)
         if m:
             article[key] = m.group(1)
     
@@ -103,7 +108,7 @@ def parse_conference(r):
 
 
 def bibtex2bibitem_conference(bibtex):
-    bibitems = []
+
     bibitem = ""
 
     bibitem = bibtex["author"] + ', ``{}". '.format(bibtex["title"])
@@ -122,7 +127,6 @@ def bibtex2bibitem_conference(bibtex):
     return bibitem
 
 def bibtex2bibitem_article(bibtex):
-    bibitems = []
     bibitem = ""
 
     bibitem = bibtex["author"] + ', ``{}". '.format(bibtex["title"])
@@ -139,14 +143,33 @@ def bibtex2bibitem_article(bibtex):
     return bibitem
 
 
+def bibtex2bibitem(bibtex):
+    bibitems = []
+    bibitem = ""
+    for r in bibtex:
+        entry_type = check_type(r)
+        if entry_type == "article":
+            article = parse_article(r)
+            bibitem = bibtex2bibitem_article(article)
+            bibitems.append(bibitem)
+        else:
+            conference = parse_conference(r)
+            bibitem = bibtex2bibitem_conference(conference)
+            bibitems.append(bibitem)
+        bibitem = ""
+
+    return bibitems
+
+
 if __name__ == '__main__':
     bibs = parse_bibs("./test.bib")
     #article = parse_article(bibs[-1])
-    #print(article)
     #bibitem = bibtex2bibitem_article(article)
     #print(bibitem)
 
-    conference = parse_conference(bibs[3])
-    bibitem = bibtex2bibitem_conference(conference)
-    print(bibitem)
-    
+    #conference = parse_conference(bibs[3])
+    #bibitem = bibtex2bibitem_conference(conference)
+    #print(bibitem)
+    bibitems = bibtex2bibitem(bibs)
+    for bibitem in bibitems:
+        print(bibitem)
