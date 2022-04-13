@@ -69,6 +69,10 @@ def parse_authors(authors):
         output_authors = ", ".join(_ for _ in authors_list[:-1]) + " and " + authors_list[-1]
     return output_authors
 
+def parse_conferencename(conference_name):
+    new_conference_name = re.sub('Proceedings', 'Proc.', conference_name)
+    return new_conference_name
+
 
 def parse_conference(r):
     conference = {"entry_type":"",
@@ -91,9 +95,9 @@ def parse_conference(r):
         m = re.search(key + r'={(.*?)}',content)
         if m:
             conference[key] = m.group(1)
-
     
     conference["author"] = parse_authors(conference["author"])
+    conference["booktitle"] = parse_conferencename(conference["booktitle"])
 
     return conference
 
@@ -103,7 +107,6 @@ def bibtex2bibitem_conference(bibtex):
     bibitem = ""
 
     bibitem = bibtex["author"] + ', ``{}". '.format(bibtex["title"])
-    print(bibitem)
     if bibtex["booktitle"]:
         bibitem = bibitem + 'in \emph{' + bibtex["booktitle"] + '}, '
     if bibtex["journal"]:
@@ -123,7 +126,6 @@ def bibtex2bibitem_article(bibtex):
     bibitem = ""
 
     bibitem = bibtex["author"] + ', ``{}". '.format(bibtex["title"])
-    print(bibitem)
     if bibtex["journal"]:
         bibitem = bibitem + ' \emph{' + bibtex["journal"] + '}, '
     if bibtex['volume']:
@@ -138,16 +140,13 @@ def bibtex2bibitem_article(bibtex):
 
 
 if __name__ == '__main__':
-    bibs = parse_bibs("./gatattn.bib")
-    #print(bibs)
-    article = parse_article(bibs[0])
-    print(article)
-    bibitem = bibtex2bibitem_article(article)
-    print(bibitem)
+    bibs = parse_bibs("./test.bib")
+    #article = parse_article(bibs[-1])
+    #print(article)
+    #bibitem = bibtex2bibitem_article(article)
+    #print(bibitem)
 
-    print(bibs)
-    conference = parse_conference(bibs[4])
-    print(conference)
+    conference = parse_conference(bibs[3])
     bibitem = bibtex2bibitem_conference(conference)
     print(bibitem)
     
