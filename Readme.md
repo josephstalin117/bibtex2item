@@ -14,5 +14,4 @@
 ```
 2. 将Bibtex格式复制到test.tex文件中
 3. 调用函数`parse_bibs`，读取`test.tex`文件
-4. 期刊引文生成，先调用函数`parse_article`，读取期刊数据，生成期刊格式调用函数`bibtex2bibitem_article`
-5. 会议引文生成，先调用函数`parse_conference`，读取会议数据，生成会议调用函数`bibtex2bibitem_conference`
+4. 运行`bibtex2item.py`文件
