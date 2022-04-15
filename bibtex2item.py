@@ -56,6 +56,7 @@ def parse_article(r):
             article[key] = m.group(1)
     
     article["author"] = parse_authors(article["author"])
+    article["journal"] = parse_journal(article["journal"])
 
     return article
 
@@ -82,8 +83,19 @@ def parse_conferencename(conference_name):
     else:
         new_conference_name = "Proc. of the " + conference_name
     # IJCAI
-    new_conference_name = re.sub('IJCAI', 'of the International Joint Conferences on Artificial Intelligence (IJCAI)', new_conference_name)
+    new_conference_name = re.sub('IJCAI', 'International Joint Conferences on Artificial Intelligence (IJCAI)', new_conference_name)
     return new_conference_name
+
+def capitalize_word(s):
+    words = s.split(' ')
+    whitelist = {'and', 'the', 'is', 'to', 'on', 'of', 'in', 'for', 'with', 'a', 'an', 'and', 'or', 'as', 'at', 'by', 'from', 'into', 'near', 'of', 'off', 'on', 'onto', 'out', 'over', 'past', 'since', 'through', 'to', 'under', 'until', 'up', 'upon', 'via', 'with', 'without', 'a', 'an', 'the'}
+    capitalized_words = ' '.join([word.title() if word not in whitelist else word for word in words])
+    return capitalized_words
+
+def parse_journal(journal):
+    new_journal = capitalize_word(journal)
+    new_journal = re.sub('Ieee', 'IEEE', new_journal)
+    return new_journal
 
 
 def parse_conference(r):

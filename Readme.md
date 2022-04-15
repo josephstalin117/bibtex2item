@@ -12,6 +12,6 @@
   year={2009}
 }
 ```
-2. 将Bibtex格式复制到test.tex文件中
+2. 将Bibtex格式复制到test.bib文件中
 3. 调用函数`parse_bibs`，读取`test.tex`文件
 4. 运行`bibtex2item.py`文件
